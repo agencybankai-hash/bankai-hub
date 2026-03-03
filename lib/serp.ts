@@ -18,7 +18,6 @@ export async function collectSerp(
     throw new Error(`Unknown SERP provider: ${provider}`);
   }
 
-  // Filter excluded domains
   if (excludeDomains.length > 0) {
     results = results.filter(
       (r) => !excludeDomains.some((d) => r.url.includes(d))
@@ -39,14 +38,26 @@ async function collectXmlriver(
 
   if (!user || !key) throw new Error("XMLRIVER_USER and XMLRIVER_KEY required");
 
-  const url = new URL("https://xmlriver.com/search_serp/xml/");
+  const domainMap: Record<string, string> = {
+    us: "1", uk: "2", de: "3", fr: "4", es: "5",
+    ru: "2", com: "1",
+  };
+  const countryMap: Record<string, string> = {
+    us: "2840", uk: "2826", de: "2276", fr: "2250",
+    es: "2724", ru: "2643", kz: "2398",
+  };
+  const langMap: Record<string, string> = {
+    en: "EN", ru: "RU", de: "DE", fr: "FR", es: "ES",
+  };
+
+  const url = new URL("https://xmlriver.com/search/xml");
   url.searchParams.set("user", user);
   url.searchParams.set("key", key);
   url.searchParams.set("query", query);
   url.searchParams.set("groupby", String(topN));
-  url.searchParams.set("domain", "google.com");
-  url.searchParams.set("lang", language);
-  url.searchParams.set("country", region);
+  if (langMap[language]) url.searchParams.set("lr", langMap[language]);
+  if (countryMap[region]) url.searchParams.set("country", countryMap[region]);
+  if (domainMap[region]) url.searchParams.set("domain", domainMap[region]);
 
   const resp = await fetch(url.toString(), { signal: AbortSignal.timeout(30000) });
   const text = await resp.text();
@@ -57,7 +68,6 @@ async function collectXmlriver(
 function parseXmlriverResponse(text: string): SerpResult[] {
   const results: SerpResult[] = [];
 
-  // Try JSON first (some xmlriver endpoints return JSON)
   try {
     const data = JSON.parse(text);
     if (data.results) {
@@ -70,8 +80,6 @@ function parseXmlriverResponse(text: string): SerpResult[] {
     }
   } catch {}
 
-  // Parse XML response
-  // Simple XML parsing for <group><doc> structure
   const groupRegex = /<group[^>]*>([\s\S]*?)<\/group>/g;
   let match;
   let position = 1;
@@ -81,6 +89,7 @@ function parseXmlriverResponse(text: string): SerpResult[] {
     const urlMatch = block.match(/<url[^>]*>([\s\S]*?)<\/url>/);
     const titleMatch = block.match(/<title[^>]*>([\s\S]*?)<\/title>/);
     const snippetMatch =
+      block.match(/<passage>([\s\S]*?)<\/passage>/) ||
       block.match(/<snippet[^>]*>([\s\S]*?)<\/snippet>/) ||
       block.match(/<passages[^>]*>([\s\S]*?)<\/passages>/);
 
