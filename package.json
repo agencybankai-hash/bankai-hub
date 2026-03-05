@@ -1,6 +1,7 @@
 {
-  "name": "relevance-cloud-engine",
-  "version": "1.0.0",
+  "name": "bankai-hub",
+  "version": "2.0.0",
+  "description": "Modular SEO Platform — Relevance Cloud Engine",
   "private": true,
   "scripts": {
     "dev": "next dev",
