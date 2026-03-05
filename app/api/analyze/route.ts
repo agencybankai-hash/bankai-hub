@@ -1,106 +1,87 @@
-// ═══════════════════════════════════════════════════
-// Analysis API — Modular pipeline execution
-// ═══════════════════════════════════════════════════
-
 import { NextRequest, NextResponse } from "next/server";
-import { initializeModules, registry } from "@/lib/modules";
-import type { SerpCollectorInput, SerpCollectorOutput } from "@/lib/modules/serp-collector";
-import type { PageParserInput, PageParserOutput } from "@/lib/modules/page-parser";
-import type { RelevanceCloudInput, RelevanceCloudOutput } from "@/lib/modules/relevance-cloud";
-import type { PageAuditInput, PageAuditOutput } from "@/lib/modules/page-audit";
-import { PageParserModule } from "@/lib/modules/page-parser";
+import { collectSerp } from "@/lib/serp";
+import { parsePages, parseSinglePage } from "@/lib/parser";
+import { buildRelevanceCloud } from "@/lib/analyzer";
+import { compareWithCloud } from "@/lib/comparator";
+import type { AnalysisRequest, AnalysisResult } from "@/lib/types";
 
-export const maxDuration = 120;
+export const maxDuration = 120; // Vercel Pro
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    initializeModules();
+    const body: AnalysisRequest = await request.json();
 
-    const body = await req.json();
+    if (!body.query?.trim()) {
+      return NextResponse.json({ error: "Query is required" }, { status: 400 });
+    }
+
     const {
       query,
       projectUrl,
-      language = "en",
-      region = "us",
+      language = "ru",
+      region = "ru",
       topN = 10,
       excludeDomains = [],
       serpProvider = "xmlriver",
     } = body;
 
-    if (!query) {
-      return NextResponse.json({ error: "Query is required" }, { status: 400 });
-    }
-
-    // ─── Step 1: SERP Collection (via module) ───
-    const serpOutput = await registry.execute<SerpCollectorInput, SerpCollectorOutput>(
-      "serp-collector",
-      { query, provider: serpProvider, topN, language, region, excludeDomains }
+    // 1. Collect SERP
+    const serpResults = await collectSerp(
+      query,
+      serpProvider,
+      topN,
+      language,
+      region,
+      excludeDomains
     );
 
-    if (serpOutput.results.length === 0) {
-      return NextResponse.json({
-        error: "No SERP results found. Check your API keys and query.",
-      }, { status: 400 });
+    if (serpResults.length === 0) {
+      return NextResponse.json(
+        { error: "No SERP results found" },
+        { status: 404 }
+      );
     }
 
-    // ─── Step 2: Page Parsing (via module) ───
-    const urls = serpOutput.results.map((r) => r.url);
-    const parserOutput = await registry.execute<PageParserInput, PageParserOutput>(
-      "page-parser",
-      { urls }
-    );
+    // 2. Parse pages
+    const urls = serpResults.map((r) => r.url);
+    const pages = await parsePages(urls);
 
-    if (parserOutput.pages.length === 0) {
-      return NextResponse.json({
-        error: "Could not parse any pages from SERP results.",
-      }, { status: 400 });
+    if (pages.length === 0) {
+      return NextResponse.json(
+        { error: "Could not parse any pages" },
+        { status: 500 }
+      );
     }
 
-    // ─── Step 3: Relevance Cloud (via module) ───
-    const cloudOutput = await registry.execute<RelevanceCloudInput, RelevanceCloudOutput>(
-      "relevance-cloud",
-      { query, pages: parserOutput.pages }
-    );
+    // 3. Build relevance cloud
+    const relevanceCloud = await buildRelevanceCloud(query, pages);
 
-    // ─── Step 4: Page Audit (via module, if URL provided) ───
+    // 4. Compare with own page (if URL provided)
     let comparison = null;
-    let auditMeta = null;
-
     if (projectUrl) {
-      const parserModule = registry.getImplementation("page-parser") as PageParserModule;
-      const myPage = await parserModule.parseSinglePage(projectUrl);
-
-      if (myPage.text) {
-        const auditOutput = await registry.execute<PageAuditInput, PageAuditOutput>(
-          "page-audit",
-          { query, myPage, cloud: cloudOutput.cloud }
-        );
-        comparison = auditOutput.comparison;
-        auditMeta = auditOutput.meta;
+      try {
+        const myPage = await parseSinglePage(projectUrl);
+        comparison = await compareWithCloud(query, myPage, relevanceCloud);
+      } catch (err) {
+        console.warn("Could not parse project URL for comparison:", err);
       }
     }
 
-    return NextResponse.json({
+    const result: AnalysisResult = {
       query,
-      serpCount: serpOutput.results.length,
-      serpResults: serpOutput.results,
-      pagesParsed: parserOutput.pages.length,
-      relevanceCloud: cloudOutput.cloud,
+      serpCount: serpResults.length,
+      pagesParsed: pages.length,
+      relevanceCloud,
       comparison,
       timestamp: new Date().toISOString(),
       status: "done",
-      // Module pipeline metadata
-      _pipeline: {
-        serp: serpOutput.meta,
-        parser: parserOutput.meta,
-        cloud: cloudOutput.meta,
-        ...(auditMeta ? { audit: auditMeta } : {}),
-      },
-    });
+    };
+
+    return NextResponse.json(result);
   } catch (error: any) {
     console.error("Analysis error:", error);
     return NextResponse.json(
-      { error: error.message || "Analysis failed" },
+      { error: error.message || "Internal server error" },
       { status: 500 }
     );
   }
