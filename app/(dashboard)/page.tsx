@@ -41,8 +41,8 @@ export default async function DashboardPage() {
             <Link key={s.label} href={s.href}>
               <Card hover>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#a78bfa]/10">
-                    <s.icon size={20} className="text-[#a78bfa]" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#DC2626]/10">
+                    <s.icon size={20} className="text-[#DC2626]" />
                   </div>
                   <div>
                     <p className="text-2xl font-bold text-slate-100">
@@ -85,7 +85,7 @@ export default async function DashboardPage() {
                         <p className="text-xs text-slate-400 mb-1">{p.niche}</p>
                       )}
                       {p.url && (
-                        <p className="text-xs text-[#a78bfa]/70 truncate">
+                        <p className="text-xs text-[#DC2626]/70 truncate">
                           {p.url}
                         </p>
                       )}
@@ -109,7 +109,7 @@ export default async function DashboardPage() {
                     Пока нет проектов.{" "}
                     <Link
                       href="/projects"
-                      className="text-[#a78bfa] hover:underline"
+                      className="text-[#DC2626] hover:underline"
                     >
                       Создать первый
                     </Link>

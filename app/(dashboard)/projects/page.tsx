@@ -117,7 +117,7 @@ export default function ProjectsPage() {
             placeholder="Поиск проектов..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-white/5 pl-9 pr-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:border-[#a78bfa]/50 focus:outline-none"
+            className="w-full rounded-lg border border-white/10 bg-white/5 pl-9 pr-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:border-[#DC2626]/50 focus:outline-none"
           />
         </div>
 
@@ -136,7 +136,7 @@ export default function ProjectsPage() {
                   </CardHeader>
                   <CardContent>
                     {p.niche && <p className="text-xs text-slate-400 mb-1">{p.niche}</p>}
-                    {p.url && <p className="text-xs text-[#a78bfa]/70 truncate">{p.url}</p>}
+                    {p.url && <p className="text-xs text-[#DC2626]/70 truncate">{p.url}</p>}
                     <p className="text-xs text-slate-500 mt-2">{formatRelative(p.updated_at)}</p>
                   </CardContent>
                 </Card>

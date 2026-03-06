@@ -212,13 +212,13 @@ export default function MonitoringPage() {
             <ArrowLeft size={18} />
           </button>
           <div className="flex items-center gap-2">
-            <Activity size={20} className="text-[#a78bfa]" />
+            <Activity size={20} className="text-[#DC2626]" />
             <h1 className="text-lg font-semibold text-slate-100">Мониторинг сайтов</h1>
           </div>
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#a78bfa] hover:bg-[#9574f0] text-white text-sm transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#DC2626] hover:bg-[#B91C1C] text-white text-sm transition-colors"
         >
           <Plus size={14} />
           Добавить URL
@@ -234,12 +234,12 @@ export default function MonitoringPage() {
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}
               placeholder="https://example.com"
-              className="flex-1 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#a78bfa]"
+              className="flex-1 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#DC2626]"
               onKeyDown={(e) => e.key === "Enter" && addUrl()}
             />
             <button
               onClick={addUrl}
-              className="px-4 py-2 rounded-lg bg-[#a78bfa] hover:bg-[#9574f0] text-white text-sm transition-colors"
+              className="px-4 py-2 rounded-lg bg-[#DC2626] hover:bg-[#B91C1C] text-white text-sm transition-colors"
             >
               Добавить
             </button>
@@ -268,7 +268,7 @@ export default function MonitoringPage() {
               key={config.id}
               className={`rounded-xl border bg-[#2a2b2d] p-4 transition-colors cursor-pointer ${
                 selectedConfig === config.id
-                  ? "border-[#a78bfa]/30"
+                  ? "border-[#DC2626]/30"
                   : "border-white/[0.08] hover:border-white/[0.1]"
               }`}
               onClick={() => setSelectedConfig(selectedConfig === config.id ? null : config.id)}
@@ -298,7 +298,7 @@ export default function MonitoringPage() {
                   <button
                     onClick={() => checkNow(config.id)}
                     disabled={checking === config.id}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-[#a78bfa] hover:bg-white/5 transition-colors disabled:opacity-50"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-[#DC2626] hover:bg-white/5 transition-colors disabled:opacity-50"
                     title="Проверить сейчас"
                   >
                     {checking === config.id ? (
@@ -311,7 +311,7 @@ export default function MonitoringPage() {
                     onClick={() => toggleConfig(config.id, "notify_telegram", !config.notify_telegram)}
                     className={`p-1.5 rounded-lg transition-colors ${
                       config.notify_telegram
-                        ? "text-[#a78bfa] hover:bg-white/5"
+                        ? "text-[#DC2626] hover:bg-white/5"
                         : "text-slate-600 hover:text-slate-400 hover:bg-white/5"
                     }`}
                     title={config.notify_telegram ? "Уведомления включены" : "Уведомления выключены"}

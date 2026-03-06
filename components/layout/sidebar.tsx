@@ -49,8 +49,8 @@ export function Sidebar() {
     >
       {/* Logo */}
       <div className="flex h-14 items-center gap-2 border-b border-white/[0.08] px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#a78bfa]/10">
-          <Zap size={18} className="text-[#a78bfa]" />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#DC2626]/10">
+          <Zap size={18} className="text-[#DC2626]" />
         </div>
         {!collapsed && (
           <span className="text-sm font-bold text-slate-100 tracking-wide">
