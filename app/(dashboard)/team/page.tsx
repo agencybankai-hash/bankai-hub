@@ -24,8 +24,8 @@ export default async function TeamPage() {
             <Card key={m.id}>
               <CardContent>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-                    <User size={18} className="text-blue-400" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#a78bfa]/10">
+                    <User size={18} className="text-[#a78bfa]" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-slate-200">

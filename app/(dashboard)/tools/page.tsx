@@ -21,12 +21,12 @@ export default function ToolsCatalogPage() {
                   <div className="flex items-start gap-3">
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-                        isActive ? "bg-blue-500/10" : "bg-white/5"
+                        isActive ? "bg-[#a78bfa]/10" : "bg-white/5"
                       }`}
                     >
                       <tool.icon
                         size={20}
-                        className={isActive ? "text-blue-400" : "text-slate-500"}
+                        className={isActive ? "text-[#a78bfa]" : "text-slate-500"}
                       />
                     </div>
                     <div className="flex-1 min-w-0">

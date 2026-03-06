@@ -166,7 +166,7 @@ export default function ToolPage() {
                   <div className="flex flex-wrap gap-2">
                     {result.relevanceCloud.entities.map((e: any, i: number) => (
                       <span key={i} className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
-                        e.importance === "high" ? "bg-blue-500/20 text-blue-300" :
+                        e.importance === "high" ? "bg-[#a78bfa]/20 text-[#c9b4f5]" :
                         e.importance === "medium" ? "bg-slate-500/20 text-slate-300" :
                         "bg-slate-800 text-slate-400"
                       }`}>
@@ -185,7 +185,7 @@ export default function ToolPage() {
                   <ul className="space-y-2">
                     {result.comparison.recommendations.map((r: string, i: number) => (
                       <li key={i} className="text-sm text-slate-400 flex gap-2">
-                        <span className="text-blue-400 shrink-0">→</span>{r}
+                        <span className="text-[#a78bfa] shrink-0">→</span>{r}
                       </li>
                     ))}
                   </ul>

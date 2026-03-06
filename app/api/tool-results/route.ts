@@ -11,10 +11,10 @@ export async function POST(request: NextRequest) {
   const { projectId, toolSlug, query, result } = await request.json();
 
   const rows = await execute(
-    `INSERT INTO hub_tool_results (project_id, tool_slug, query, result, created_by)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO hub_tool_results (project_id, tool_slug, query, result)
+     VALUES ($1, $2, $3, $4)
      RETURNING id`,
-    [projectId, toolSlug, query, JSON.stringify(result), session.user.id]
+    [projectId, toolSlug, query, JSON.stringify(result)]
   );
 
   return NextResponse.json(rows[0], { status: 201 });

@@ -35,12 +35,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0e17] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#1e1f21] px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 mb-3">
-            <Zap size={24} className="text-blue-400" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#a78bfa]/10 mb-3">
+            <Zap size={24} className="text-[#a78bfa]" />
           </div>
           <h1 className="text-xl font-bold text-slate-100">Bankai.Hub</h1>
           <p className="text-sm text-slate-400 mt-1">Войдите в платформу</p>

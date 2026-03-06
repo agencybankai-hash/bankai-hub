@@ -8,13 +8,13 @@ import { Save } from "lucide-react";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
-  const [fullName, setFullName] = useState("");
+  const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (session?.user?.name) {
-      setFullName(session.user.name);
+      setName(session.user.name);
     }
   }, [session]);
 
@@ -23,7 +23,7 @@ export default function SettingsPage() {
     await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName }),
+      body: JSON.stringify({ name }),
     });
     setSaving(false);
     setSaved(true);
@@ -40,10 +40,10 @@ export default function SettingsPage() {
             <h3 className="text-sm font-medium text-slate-300 mb-4">Профиль</h3>
             <div className="space-y-4">
               <Input
-                id="fullName"
+                id="name"
                 label="Имя"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Ваше имя"
               />
               <div className="flex items-center gap-3">

@@ -54,7 +54,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                 {project.url && (
                   <div className="flex justify-between">
                     <dt className="text-slate-500">URL</dt>
-                    <dd className="text-blue-400 truncate max-w-[200px]">{project.url}</dd>
+                    <dd className="text-[#a78bfa] truncate max-w-[200px]">{project.url}</dd>
                   </div>
                 )}
                 {project.target_audience && (
@@ -98,8 +98,8 @@ export default async function ProjectDetailPage({ params }: Props) {
               return isActive ? (
                 <Link key={tool.slug} href={toolHref}>
                   <Card hover className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
-                      <tool.icon size={18} className="text-blue-400" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#a78bfa]/10">
+                      <tool.icon size={18} className="text-[#a78bfa]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-200">{tool.name}</p>

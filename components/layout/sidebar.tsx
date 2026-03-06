@@ -43,14 +43,14 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-white/[0.06] bg-[#0a0e17] transition-all duration-200",
+        "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-white/[0.08] bg-[#252628] transition-all duration-200",
         collapsed ? "w-16" : "w-56"
       )}
     >
       {/* Logo */}
-      <div className="flex h-14 items-center gap-2 border-b border-white/[0.06] px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
-          <Zap size={18} className="text-blue-400" />
+      <div className="flex h-14 items-center gap-2 border-b border-white/[0.08] px-4">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#a78bfa]/10">
+          <Zap size={18} className="text-[#a78bfa]" />
         </div>
         {!collapsed && (
           <span className="text-sm font-bold text-slate-100 tracking-wide">
@@ -73,8 +73,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-blue-500/10 text-blue-400"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                  ? "bg-white/[0.08] text-[#f1f1f1]"
+                  : "text-[#9ca0a5] hover:text-[#f1f1f1] hover:bg-white/[0.05]"
               )}
               title={collapsed ? item.label : undefined}
             >
@@ -86,7 +86,7 @@ export function Sidebar() {
       </nav>
 
       {/* Collapse toggle */}
-      <div className="border-t border-white/[0.06] p-2">
+      <div className="border-t border-white/[0.08] p-2">
         <button
           onClick={toggle}
           className="flex w-full items-center justify-center rounded-lg p-2 text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors"

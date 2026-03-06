@@ -8,11 +8,11 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { fullName } = await request.json();
+  const { name } = await request.json();
 
   await execute(
-    `UPDATE hub_users SET full_name = $1 WHERE id = $2`,
-    [fullName, session.user.id]
+    `UPDATE hub_users SET name = $1 WHERE id = $2`,
+    [name, session.user.id]
   );
 
   return NextResponse.json({ ok: true });
