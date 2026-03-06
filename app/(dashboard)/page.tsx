@@ -5,6 +5,8 @@ import { FolderKanban, Wrench, Users } from "lucide-react";
 import Link from "next/link";
 import { formatRelative } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const projects = await queryMany(
     `SELECT * FROM hub_projects WHERE status = 'active' ORDER BY updated_at DESC LIMIT 5`

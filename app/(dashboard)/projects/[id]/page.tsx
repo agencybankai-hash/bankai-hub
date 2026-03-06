@@ -7,6 +7,8 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { ArrowRight, Lock } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ id: string }>;
 }

@@ -3,6 +3,8 @@ import { Header } from "@/components/layout";
 import { Card, CardContent, Badge } from "@/components/ui";
 import { User } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function TeamPage() {
   const members = await queryMany(
     `SELECT id, name, email, role, created_at
