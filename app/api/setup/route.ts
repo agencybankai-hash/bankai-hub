@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { execute } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 // Temporary setup endpoint — DELETE after first use!
@@ -9,7 +9,7 @@ export async function GET() {
     const hash = await bcrypt.hash(password, 12);
 
     // Upsert admin user
-    await sql(
+    await execute(
       `INSERT INTO hub_users (email, password_hash, name, role)
        VALUES ($1, $2, $3, $4)
        ON CONFLICT (email) DO UPDATE SET password_hash = $2`,
