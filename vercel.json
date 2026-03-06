@@ -2,6 +2,15 @@
   "functions": {
     "app/api/analyze/route.ts": {
       "maxDuration": 120
+    },
+    "app/api/cron/check-sites/route.ts": {
+      "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/check-sites",
+      "schedule": "0 * * * *"
+    }
+  ]
 }

@@ -89,8 +89,12 @@ export default async function ProjectDetailPage({ params }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {toolRegistry.map((tool) => {
               const isActive = tool.status === "active";
+              // site-monitor ведёт на отдельную страницу мониторинга
+              const toolHref = tool.slug === "site-monitor"
+                ? `/projects/${id}/monitoring`
+                : `/projects/${id}/tools/${tool.slug}`;
               return isActive ? (
-                <Link key={tool.slug} href={`/projects/${id}/tools/${tool.slug}`}>
+                <Link key={tool.slug} href={toolHref}>
                   <Card hover className="flex items-center gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
                       <tool.icon size={18} className="text-blue-400" />

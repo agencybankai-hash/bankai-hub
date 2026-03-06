@@ -53,9 +53,9 @@ export const toolRegistry: ToolDefinition[] = [
   {
     slug: "site-monitor",
     name: "Мониторинг сайта",
-    description: "Отслеживание доступности, скорости и изменений на сайте",
+    description: "Отслеживание доступности сайта каждый час с уведомлениями в Telegram при падении",
     icon: Activity,
-    status: "coming-soon",
+    status: "active",
     category: "analytics",
   },
 ];
