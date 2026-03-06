@@ -49,7 +49,7 @@ export function Modal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
           className={cn(
-            "w-full rounded-xl border border-white/[0.06] bg-[#0f1623] p-6 shadow-2xl",
+            "w-full rounded-xl border border-white/[0.06] bg-[#2a2b2d] p-6 shadow-2xl",
             sizeStyles[size],
             className
           )}

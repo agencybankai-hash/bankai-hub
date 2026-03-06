@@ -30,19 +30,19 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           id={id}
           className={cn(
             "w-full rounded-lg border bg-white/5 px-3 py-2 text-sm text-slate-200 transition-colors appearance-none",
-            "border-white/10 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/40",
+            "border-white/10 focus:border-[#a78bfa]/50 focus:outline-none focus:ring-1 focus:ring-[#a78bfa]/40",
             error && "border-red-500/50",
             className
           )}
           {...props}
         >
           {placeholder && (
-            <option value="" className="bg-[#111827]">
+            <option value="" className="bg-[#2a2b2d]">
               {placeholder}
             </option>
           )}
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-[#111827]">
+            <option key={opt.value} value={opt.value} className="bg-[#2a2b2d]">
               {opt.label}
             </option>
           ))}

@@ -65,10 +65,9 @@ export async function POST(request: NextRequest) {
     cleanUrl = testUrl;
   }
 
-  // Get user ID — try from session, fallback to lookup by email
-  let userId: string | null = (session.user as any).id || null;
-
-  if (!userId && session.user.email) {
+  // Always look up user by email to guarantee correct ID
+  let userId: string | null = null;
+  if (session.user.email) {
     const user = await queryOne<{ id: string }>(
       `SELECT id FROM hub_users WHERE email = $1`,
       [session.user.email]
@@ -76,14 +75,19 @@ export async function POST(request: NextRequest) {
     userId = user?.id || null;
   }
 
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Пользователь не найден в базе данных" },
+      { status: 400 }
+    );
+  }
+
   try {
     const result = await queryOne<{ id: string }>(
-      `INSERT INTO hub_projects (name, url, niche, description${userId ? ", owner_id" : ""})
-       VALUES ($1, $2, $3, $4${userId ? ", $5" : ""})
+      `INSERT INTO hub_projects (name, url, niche, description, owner_id)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING id, name, url, niche, description, status, updated_at`,
-      userId
-        ? [name.trim(), cleanUrl, niche?.trim() || null, description?.trim() || null, userId]
-        : [name.trim(), cleanUrl, niche?.trim() || null, description?.trim() || null]
+      [name.trim(), cleanUrl, niche?.trim() || null, description?.trim() || null, userId]
     );
 
     return NextResponse.json(result, { status: 201 });
