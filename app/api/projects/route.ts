@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
   }
 
   const rows = await execute(
-    `INSERT INTO hub_projects (name, url, niche, description, created_by)
+    `INSERT INTO hub_projects (name, url, niche, description, owner_id)
      VALUES ($1, $2, $3, $4, $5)
      RETURNING id`,
     [name, url || null, niche || null, description || null, session.user.id]
