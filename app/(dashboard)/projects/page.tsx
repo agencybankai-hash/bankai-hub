@@ -31,35 +31,64 @@ export default function ProjectsPage() {
   const [formNiche, setFormNiche] = useState("");
   const [formDesc, setFormDesc] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const fetchProjects = async () => {
-    const res = await fetch("/api/projects");
-    const data = await res.json();
-    setProjects(Array.isArray(data) ? data : []);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/projects");
+      if (!res.ok) {
+        console.error("Failed to fetch projects:", res.status);
+        setLoading(false);
+        return;
+      }
+      const data = await res.json();
+      setProjects(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Fetch projects error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchProjects(); }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setSaving(true);
 
-    await fetch("/api/projects", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formName,
-        url: formUrl || null,
-        niche: formNiche || null,
-        description: formDesc || null,
-      }),
-    });
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formName,
+          url: formUrl || null,
+          niche: formNiche || null,
+          description: formDesc || null,
+        }),
+      });
 
-    setFormName(""); setFormUrl(""); setFormNiche(""); setFormDesc("");
-    setShowCreate(false);
-    setSaving(false);
-    fetchProjects();
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Ошибка создания проекта");
+        setSaving(false);
+        return;
+      }
+
+      // Success — reset form and refresh
+      setFormName("");
+      setFormUrl("");
+      setFormNiche("");
+      setFormDesc("");
+      setShowCreate(false);
+      fetchProjects();
+    } catch (err) {
+      setError("Ошибка сети. Попробуйте ещё раз.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const filtered = projects.filter(
@@ -126,14 +155,46 @@ export default function ProjectsPage() {
         )}
       </div>
 
-      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Новый проект">
+      <Modal open={showCreate} onClose={() => { setShowCreate(false); setError(""); }} title="Новый проект">
         <form onSubmit={handleCreate} className="space-y-4">
-          <Input id="name" label="Название *" placeholder="Мой сайт" value={formName} onChange={(e) => setFormName(e.target.value)} required />
-          <Input id="url" label="URL сайта" placeholder="https://example.com" value={formUrl} onChange={(e) => setFormUrl(e.target.value)} />
-          <Input id="niche" label="Ниша" placeholder="e-commerce, медицина, финансы..." value={formNiche} onChange={(e) => setFormNiche(e.target.value)} />
-          <Textarea id="desc" label="Описание" placeholder="Краткое описание проекта..." value={formDesc} onChange={(e) => setFormDesc(e.target.value)} />
+          <Input
+            id="name"
+            label="Название *"
+            placeholder="DECA Windows & Doors"
+            value={formName}
+            onChange={(e) => setFormName(e.target.value)}
+            required
+          />
+          <Input
+            id="url"
+            label="URL сайта"
+            placeholder="https://example.com"
+            value={formUrl}
+            onChange={(e) => setFormUrl(e.target.value)}
+          />
+          <Input
+            id="niche"
+            label="Ниша"
+            placeholder="e-commerce, медицина, финансы..."
+            value={formNiche}
+            onChange={(e) => setFormNiche(e.target.value)}
+          />
+          <Textarea
+            id="desc"
+            label="Описание"
+            placeholder="Краткое описание проекта..."
+            value={formDesc}
+            onChange={(e) => setFormDesc(e.target.value)}
+          />
+
+          {error && (
+            <p className="text-sm text-red-400 bg-red-400/10 rounded-lg px-3 py-2">{error}</p>
+          )}
+
           <div className="flex gap-2 justify-end pt-2">
-            <Button type="button" variant="secondary" onClick={() => setShowCreate(false)}>Отмена</Button>
+            <Button type="button" variant="secondary" onClick={() => { setShowCreate(false); setError(""); }}>
+              Отмена
+            </Button>
             <Button type="submit" loading={saving}>Создать</Button>
           </div>
         </form>

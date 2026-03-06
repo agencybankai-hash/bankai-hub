@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { queryMany, execute } from "@/lib/db";
+import { queryMany, queryOne } from "@/lib/db";
 
 // GET /api/projects — list all projects
 export async function GET() {
@@ -17,6 +17,15 @@ export async function GET() {
   return NextResponse.json(projects);
 }
 
+function isValidUrl(str: string): boolean {
+  try {
+    const url = new URL(str);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 // POST /api/projects — create project
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -24,18 +33,65 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, url, niche, description } = await request.json();
-
-  if (!name?.trim()) {
-    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const rows = await execute(
-    `INSERT INTO hub_projects (name, url, niche, description, owner_id)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING id`,
-    [name, url || null, niche || null, description || null, session.user.id]
-  );
+  const { name, url, niche, description } = body;
 
-  return NextResponse.json(rows[0], { status: 201 });
+  // Validation
+  if (!name?.trim() || name.trim().length < 2) {
+    return NextResponse.json({ error: "Название проекта — минимум 2 символа" }, { status: 400 });
+  }
+
+  if (name.trim().length > 100) {
+    return NextResponse.json({ error: "Название слишком длинное (максимум 100 символов)" }, { status: 400 });
+  }
+
+  // URL validation — if provided, must be valid
+  let cleanUrl: string | null = null;
+  if (url && url.trim()) {
+    let testUrl = url.trim();
+    // Auto-add https:// if missing
+    if (!testUrl.startsWith("http://") && !testUrl.startsWith("https://")) {
+      testUrl = "https://" + testUrl;
+    }
+    if (!isValidUrl(testUrl)) {
+      return NextResponse.json({ error: "Некорректный URL. Пример: https://example.com" }, { status: 400 });
+    }
+    cleanUrl = testUrl;
+  }
+
+  // Get user ID — try from session, fallback to lookup by email
+  let userId: string | null = (session.user as any).id || null;
+
+  if (!userId && session.user.email) {
+    const user = await queryOne<{ id: string }>(
+      `SELECT id FROM hub_users WHERE email = $1`,
+      [session.user.email]
+    );
+    userId = user?.id || null;
+  }
+
+  try {
+    const result = await queryOne<{ id: string }>(
+      `INSERT INTO hub_projects (name, url, niche, description${userId ? ", owner_id" : ""})
+       VALUES ($1, $2, $3, $4${userId ? ", $5" : ""})
+       RETURNING id, name, url, niche, description, status, updated_at`,
+      userId
+        ? [name.trim(), cleanUrl, niche?.trim() || null, description?.trim() || null, userId]
+        : [name.trim(), cleanUrl, niche?.trim() || null, description?.trim() || null]
+    );
+
+    return NextResponse.json(result, { status: 201 });
+  } catch (err: any) {
+    console.error("[API] Create project error:", err);
+    return NextResponse.json(
+      { error: "Ошибка создания проекта: " + (err.message || "unknown") },
+      { status: 500 }
+    );
+  }
 }

@@ -15,7 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const sql = getDb();
         const rows = await sql(
-          `SELECT id, email, password_hash, full_name, role, avatar_url
+          `SELECT id, email, password_hash, name, role
            FROM hub_users WHERE email = $1`,
           [credentials.email]
         );
@@ -32,9 +32,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return {
           id: user.id as string,
           email: user.email as string,
-          name: user.full_name as string,
+          name: (user.name as string) || "",
           role: user.role as string,
-          image: user.avatar_url as string | null,
         };
       },
     }),
