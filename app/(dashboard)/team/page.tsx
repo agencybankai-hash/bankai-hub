@@ -5,7 +5,7 @@ import { User } from "lucide-react";
 
 export default async function TeamPage() {
   const members = await queryMany(
-    `SELECT id, full_name, role, avatar_url, created_at
+    `SELECT id, name, email, role, created_at
      FROM hub_users ORDER BY created_at ASC`
   );
 
@@ -22,20 +22,12 @@ export default async function TeamPage() {
             <Card key={m.id}>
               <CardContent>
                 <div className="flex items-center gap-3">
-                  {m.avatar_url ? (
-                    <img
-                      src={m.avatar_url}
-                      alt={m.full_name}
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-                      <User size={18} className="text-blue-400" />
-                    </div>
-                  )}
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
+                    <User size={18} className="text-blue-400" />
+                  </div>
                   <div>
                     <p className="text-sm font-medium text-slate-200">
-                      {m.full_name || "Без имени"}
+                      {m.name || "Без имени"}
                     </p>
                     <Badge variant={m.role === "admin" ? "info" : "default"}>
                       {m.role}
